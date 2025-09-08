@@ -7,7 +7,10 @@ import { FaTrash, FaEdit, FaCheckCircle, FaRegCircle, FaRegCalendarAlt } from 'r
 
 function Calendar() {
   function formatDate(date) {
-    return new Date(date).toISOString().slice(0, 10);
+    // yyyy-MM-ddTHH:mm formato per datetime-local
+    const d = new Date(date);
+    const pad = n => n.toString().padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
 
   const [todos, setTodos] = useState([]);
@@ -203,10 +206,10 @@ function Calendar() {
                   <Form.Control placeholder="Descrizione" value={newTodo.description} onChange={e => setNewTodo({...newTodo, description: e.target.value})} disabled={loading} className="shadow rounded-pill px-4 py-2 border-0" style={{fontSize: 17}} />
                 </Form.Group>
               </Col>
-              <Col xs={6} md={2}>
-                <Form.Group controlId="todoDate">
-                  <Form.Label className="fw-bold" style={{fontSize: 17}}>Data</Form.Label>
-                  <Form.Control type="date" value={newTodo.date} onChange={e => setNewTodo({...newTodo, date: e.target.value})} disabled={loading} className="shadow rounded-pill px-4 py-2 border-0" style={{fontSize: 17}} />
+              <Col xs={6} md={3}>
+                <Form.Group controlId="todoDateTime">
+                  <Form.Label className="fw-bold" style={{fontSize: 17}}>Data e ora</Form.Label>
+                  <Form.Control type="datetime-local" value={newTodo.date} onChange={e => setNewTodo({...newTodo, date: e.target.value})} disabled={loading} className="shadow rounded-pill px-4 py-2 border-0" style={{fontSize: 17}} />
                 </Form.Group>
               </Col>
               <Col xs={6} md={2}>
@@ -242,9 +245,9 @@ function Calendar() {
                   <Form.Label className="fw-bold">Descrizione</Form.Label>
                   <Form.Control value={editTodo.description} onChange={e => setEditTodo({...editTodo, description: e.target.value})} />
                 </Form.Group>
-                <Form.Group className="mb-2" controlId="editDate">
-                  <Form.Label className="fw-bold">Data</Form.Label>
-                  <Form.Control type="date" value={formatDate(editTodo.date)} onChange={e => setEditTodo({...editTodo, date: e.target.value})} />
+                <Form.Group className="mb-2" controlId="editDateTime">
+                  <Form.Label className="fw-bold">Data e ora</Form.Label>
+                  <Form.Control type="datetime-local" value={formatDate(editTodo.date)} onChange={e => setEditTodo({...editTodo, date: e.target.value})} />
                 </Form.Group>
                 <Form.Group className="mb-2" controlId="editPriority">
                   <Form.Label className="fw-bold">Priorità</Form.Label>
