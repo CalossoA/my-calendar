@@ -8,9 +8,11 @@ import { FaTrash, FaEdit, FaCheckCircle, FaRegCircle, FaRegCalendarAlt } from 'r
 function Calendar() {
   function formatDate(date) {
     // yyyy-MM-ddTHH:mm formato per datetime-local
-    const d = new Date(date);
-    const pad = n => n.toString().padStart(2, '0');
-    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d)) return '';
+  const pad = n => n.toString().padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
 
   const [todos, setTodos] = useState([]);
@@ -88,8 +90,16 @@ function Calendar() {
   };
 
   // Filtri avanzati
+  // Confronta solo la parte di data (yyyy-MM-dd) ignorando l'orario
+  function getDatePart(dt) {
+  if (!dt) return '';
+  // Gestisce sia yyyy-MM-dd che yyyy-MM-ddTHH:mm
+  return dt.split('T')[0];
+  }
   let filtered = todos.filter(t => {
-    const matchDate = formatDate(t.date) === viewDate;
+  const todoDate = getDatePart(t.date);
+  const viewDatePart = getDatePart(viewDate);
+  const matchDate = todoDate === viewDatePart;
     const matchDone = filter === 'all' ? true : filter === 'done' ? t.done : !t.done;
     const matchText = search === '' || t.title.toLowerCase().includes(search.toLowerCase()) || (t.description || '').toLowerCase().includes(search.toLowerCase());
     return matchDate && matchDone && matchText;
