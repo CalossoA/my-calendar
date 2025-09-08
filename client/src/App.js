@@ -9,9 +9,11 @@ import { FaBell, FaBellSlash } from 'react-icons/fa';
 function App() {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushError, setPushError] = useState('');
+  const [pushSuccess, setPushSuccess] = useState(false);
 
   const handleEnablePush = async () => {
     setPushError('');
+    setPushSuccess(false);
     if (typeof window.Notification === 'undefined') {
       setPushError('Le notifiche push non sono supportate su questo browser o dispositivo. Usa Safari su iOS 16.4+ o Chrome/Edge su Android.');
       return;
@@ -20,7 +22,12 @@ function App() {
     if (granted === 'granted') {
       const ok = await subscribeUserToPush();
       setPushEnabled(ok);
-      if (!ok) setPushError('Errore nella registrazione della notifica push.');
+      if (ok) {
+        setPushSuccess(true);
+        setTimeout(() => setPushSuccess(false), 4000);
+      } else {
+        setPushError('Errore nella registrazione della notifica push.');
+      }
     } else {
       setPushError('Permesso per le notifiche negato.');
     }
@@ -46,6 +53,11 @@ function App() {
         </div>
       </nav>
       {pushError && <div className="alert alert-danger text-center m-0">{pushError}</div>}
+      {pushSuccess && (
+        <div className="alert alert-success text-center m-0 animate__animated animate__fadeInDown" style={{position: 'fixed', top: 70, left: 0, right: 0, zIndex: 2000}}>
+          Notifiche push attivate! Riceverai promemoria direttamente sul tuo dispositivo.
+        </div>
+      )}
       <main className="container py-4 animate__animated animate__fadeInUp">
         <Calendar />
       </main>
