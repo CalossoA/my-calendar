@@ -124,6 +124,19 @@ app.post('/api/notify', async (req, res) => {
   res.json({ success: true });
 });
 
+
+// Serve la build React
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../client/build')));
+app.get('*', (req, res) => {
+  // Se la richiesta non è per le API, restituisci index.html
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  } else {
+    res.status(404).json({ error: 'Not found' });
+  }
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
